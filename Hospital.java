@@ -4,8 +4,6 @@ import java.util.Scanner;
 
 public class Hospital {
 
-    private static final int NUMBER_OF_TREATMENT_ROOMS = 2;
-
     public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
 
@@ -14,8 +12,9 @@ public class Hospital {
         int numPatients = readPositiveInt(in, "Number of patients: ");
         System.out.println();
 
-        WaitingRoom waitingRoom = new WaitingRoom(capacity);
-        TreatmentRooms treatmentRooms = new TreatmentRooms(NUMBER_OF_TREATMENT_ROOMS);
+        SimulationState state = new SimulationState(numPatients);
+        WaitingRoom waitingRoom = new WaitingRoom(capacity, state);
+        TreatmentRooms treatmentRooms = new TreatmentRooms();
 
         Doctor[] doctors = new Doctor[numDoctors];
         for (int i = 0; i < numDoctors; i++) {
@@ -48,7 +47,6 @@ public class Hospital {
         joinAll(patients);
         Logger.log("All patients have been treated.");
 
-        waitingRoom.closeFor(numDoctors);
         joinAll(doctors);
         Logger.log("Simulation completed.");
     }
