@@ -1,4 +1,3 @@
-import java.util.Random;
 import java.util.Scanner;
 
 
@@ -18,7 +17,7 @@ public class Hospital {
 
         Doctor[] doctors = new Doctor[numDoctors];
         for (int i = 0; i < numDoctors; i++) {
-            doctors[i] = new Doctor(i + 1, waitingRoom, treatmentRooms);
+            doctors[i] = new Doctor(i + 1, waitingRoom, treatmentRooms, state);
         }
 
         Patient[] patients = new Patient[numPatients];
@@ -38,13 +37,17 @@ public class Hospital {
             d.start();
         }
 
-        Random random = new Random();
-        for (Patient p : patients) {
-            p.start();
-            sleepQuietly(200 + random.nextInt(600));
+        for (int i = 0; i < patients.length; i++) {
+            patients[i].start();
+            sleepQuietly(500); // Simulate arrival intervals between incoming patients
         }
 
         joinAll(patients);
+        try {
+            state.awaitAllDone();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
         Logger.log("All patients have been treated.");
 
         joinAll(doctors);

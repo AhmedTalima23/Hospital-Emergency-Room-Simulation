@@ -43,7 +43,7 @@ public class WaitingRoom {
         insert(p);
         return true;
     }
-    public Patient take() {
+    public Patient take(int doctorId) {
         while (true) {
             if (elements.tryP(200)) {
                 mutex.P();
@@ -55,6 +55,7 @@ public class WaitingRoom {
                 } finally {
                     mutex.V();
                 }
+                Logger.log("Doctor " + doctorId + " is assigned to " + p + ".");
                 spaces.V();
                 return p;
             }

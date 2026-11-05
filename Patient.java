@@ -31,7 +31,16 @@ public class Patient extends Thread {
     }
 
     public void sendBack() {
-        new Thread(() -> enterWaitingRoom(false)).start();
+        if (room.tryEnter(this)) {
+            return;
+        }
+
+        Logger.log(
+                "The waiting room is full.",
+                toString() + " is waiting outside for an available seat."
+        );
+
+        new Thread(() -> room.enter(this)).start();
     }
 
     @Override

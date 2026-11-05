@@ -18,12 +18,10 @@ public class Doctor extends Thread {
     @Override
     public void run() {
         while (!Thread.currentThread().isInterrupted()) {
-            Patient p = waitingRoom.take();
+            Patient p = waitingRoom.take(id);
             if (p == null) {
                 break;
             }
-
-            Logger.log("Doctor " + id + " is assigned to " + p + ".");
 
             Logger.log("Doctor " + id + " is trying to acquire a treatment room.");
 
@@ -33,7 +31,7 @@ public class Doctor extends Thread {
                     Logger.log("Doctor " + id + " begins treating " + p + ".");
 
                     try {
-                        int treatmentDuration = 3500 + (int) (Math.random() * 2500);
+                        int treatmentDuration = 5500 + (int) (Math.random() * 1000);
                         Thread.sleep(treatmentDuration);
                     } catch (InterruptedException e) {
                         Thread.currentThread().interrupt();
@@ -42,15 +40,16 @@ public class Doctor extends Thread {
                     Logger.log("Doctor " + id + " finished treating " + p + ".");
                 } finally {
                     treatmentRooms.release();
-                    Logger.log("Doctor " + id + " released the treatment room.");
+                    Logger.log(
+                        "Doctor " + id + " released the treatment room.",
+                        "Doctor " + id + " is now available.",
+                        p + " left."
+                    );
                 }
 
-                Logger.log(p + " left.");
                 if (state != null) {
                     state.patientLeft();
                 }
-
-                Logger.log("Doctor " + id + " is now available.");
             } else {
                 Logger.log("Doctor " + id + " could not acquire a treatment room.");
                 Logger.log("Doctor " + id + " is sending " + p + " back to the waiting room.");
